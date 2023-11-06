@@ -8,10 +8,10 @@
         .hide{
             display: none;
         }
-        .car{
+        .car,.enemy{
               position: absolute;
               bottom: 100px;
-              left: 200px;
+              left: 100px;
               width: 50px;
               height: 100px;
               background-color: blue;
@@ -65,11 +65,39 @@
           document.addEventListener('keyup', pressOff);
 
 
+          function moveLines(){
+             let lines = document.querySelectorAll('.line');
+              lines.forEach((line)=>{
+
+                    if(line.y >= 1350){
+                          line.y -= 1350;
+                    }
+                  line.y = line.y + player.speed;
+                  line.style.top = line.y + 'px';
+              })
+          }
+
+          function moveEnemy(){
+               let enemies = document.querySelectorAll('.enemy');
+               enemies.forEach((enemy)=>{
+
+                    if(enemy.y >= 1350){
+                          enemy.y -=1200;
+                         enemy.style.left = Math.floor(Math.random()*150) + 'px';
+                    }
+                    enemy.y = enemy.y + player.speed;
+                    enemy.style.top = enemy.y + 'px';
+              })
+          }
+
+
           function playGame(){
                console.log("In Play Game");
                let car = document.querySelector('.car');
                let road = gameArea.getBoundingClientRect();
-               console.log(road);
+               // console.log(road);
+               moveLines()
+               moveEnemy()
               if(player.start == true){
                 if(keys.ArrowUp == true && player.y > road.top){
                      player.y = player.y - player.speed;
@@ -78,11 +106,11 @@
                      player.y = player.y + player.speed;
                 }
 
-                if(keys.ArrowLeft == true  ){
+                if(keys.ArrowLeft == true && player.x > 0 ){
                      player.x = player.x - player.speed;
                 }
 
-               if(keys.ArrowRight == true){
+               if(keys.ArrowRight == true && player.x < 200-50){
                          player.x = player.x + player.speed;
                }
                car.style.left = player.x + 'px';
@@ -99,7 +127,7 @@
                if(e.key == 'ArrowUp' || e.key == 'ArrowDown' || e.key == 'ArrowLeft' || e.key == 'ArrowRight'){
                 keys[e.key] = true;
                } 
-               console.log(keys);
+               // console.log(keys);
           }
 
           function pressOff(e){
@@ -108,7 +136,7 @@
                  if(e.key == 'ArrowUp' || e.key == 'ArrowDown' || e.key == 'ArrowLeft' || e.key == 'ArrowRight'){
                 keys[e.key] = false;
                } 
-                console.log(keys);
+               //  console.log(keys);
             }
 
         
@@ -118,11 +146,13 @@
                gameArea.classList.remove("hide")
 
                player.start = true;
-
-                for(let x = 0; x<5; x++){
+               
+                // lines on the road
+                for(let x = 0; x<10; x++){
                     let div = document.createElement('div');
                     div.classList.add('line');
-                    div.style.top = x*150 + 'px';
+                    div.y = x*150;
+                    div.style.top = div.y + 'px';
                     gameArea.append(div);
                 }
 
@@ -141,7 +171,19 @@
                player.x = car.offsetLeft;
                player.y = car.offsetTop;
 
-               console.log(player);
+               // console.log(player);
+               // enemy car: 
+               for(let x = 0; x<3; x++){
+                    let enemy =  document.createElement("div")
+                    enemy.setAttribute("class", "enemy")
+                    enemy.y = (x+1)*300;
+                    enemy.style.top = enemy.y + 'px';
+                    enemy.style.left = Math.floor(Math.random()*150) + 'px';
+                    enemy.style.backgroundColor = "red";
+                    gameArea.append(enemy);
+                    console.log(enemy);
+
+               }
 
           }
 
