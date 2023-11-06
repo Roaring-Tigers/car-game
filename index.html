@@ -11,7 +11,7 @@
         .car,.enemy{
               position: absolute;
               bottom: 100px;
-              left: 100px;
+              left: 0px;
               width: 50px;
               height: 100px;
               background-color: blue;
@@ -40,7 +40,7 @@
      <div class="score"></div>
      <div class="game">
             <div class="startScreen"> Welcome Message</div>
-            <div class="gameArea hide"> 
+            <div class="gameArea"> 
            </div>
      </div>
 
@@ -77,9 +77,18 @@
               })
           }
 
-          function moveEnemy(){
+          function moveEnemy(car){
                let enemies = document.querySelectorAll('.enemy');
                enemies.forEach((enemy)=>{
+
+                    if(isCollide(car, enemy)){
+                         console.log("Boom Hit");
+                         player.start = false;
+                         startScreen.classList.remove("hide");
+                         startScreen.innerHTML = "Game Over <br> Your final score is " + player.score + "<br> Press here to restart the game";
+                         // gameArea.classList.add("hide");
+
+                    }
 
                     if(enemy.y >= 1350){
                           enemy.y -=1200;
@@ -90,6 +99,27 @@
               })
           }
 
+          function isCollide(a,b){
+               let aCar = a.getBoundingClientRect();
+               let bCar = b.getBoundingClientRect();
+               console.log(aCar);
+               console.log(bCar);
+
+               // if(aCar.left > bCar.right || aCar.right < bCar.left || aCar.top > bCar.bottom || aCar.bottom < bCar.top)
+
+               // car collision:
+               //   if(aCar.left <bCar.left && aCar.right > bCar.left && aCar.top > bCar.bottom && aCar.bottom > bCar.top){
+               //        return true;
+               //   }
+
+               if(aCar.right - bCar.left>0 && aCar.left - bCar.right<0 && aCar.top - bCar.bottom<0 && aCar.bottom - bCar.top>0){
+                    // console.log("Collision");
+                    return true;
+               }
+               return false;
+                    
+
+          }
 
           function playGame(){
                console.log("In Play Game");
@@ -97,7 +127,8 @@
                let road = gameArea.getBoundingClientRect();
                // console.log(road);
                moveLines()
-               moveEnemy()
+               moveEnemy(car)
+               // isCollide()
               if(player.start == true){
                 if(keys.ArrowUp == true && player.y > road.top){
                      player.y = player.y - player.speed;
@@ -115,7 +146,8 @@
                }
                car.style.left = player.x + 'px';
                car.style.top = player.y + 'px';
-
+                player.score++;
+                score.innerText = "Score: " + player.score;
                window.requestAnimationFrame(playGame);
               }
           }
@@ -143,9 +175,11 @@
 
           function start(){
                startScreen.classList.add("hide")
-               gameArea.classList.remove("hide")
+               // gameArea.classList.remove("hide")
+               gameArea.innerHTML = "";
 
                player.start = true;
+               player.score = 0;
                
                 // lines on the road
                 for(let x = 0; x<10; x++){
@@ -179,7 +213,8 @@
                     enemy.y = (x+1)*300;
                     enemy.style.top = enemy.y + 'px';
                     enemy.style.left = Math.floor(Math.random()*150) + 'px';
-                    enemy.style.backgroundColor = "red";
+                    
+                    enemy.style.backgroundColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ")";
                     gameArea.append(enemy);
                     console.log(enemy);
 
@@ -197,3 +232,10 @@
 
 <!-- Request Animation Frame -->
 <!-- https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame -->
+
+
+<!--  make complete header as score area  --> 
+
+<!-- start screen in center of the road -->
+
+<!--  pic for car-->
